@@ -1,0 +1,19 @@
+terraform {
+  required_version = ">= 1.4.0"
+  required_providers {
+    # https://registry.terraform.io/providers/hashicorp/azurerm/latest
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">=4.25.0"
+    }
+    # https://registry.terraform.io/providers/hashicorp/azuread/latest
+    azuread = {
+      source  = "hashicorp/azuread"
+      version = ">=3.3.0"
+    }
+    time = {
+      source  = "hashicorp/time"
+      version = ">=0.13.0"
+    }
+  }
+}

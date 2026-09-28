@@ -1,0 +1,6 @@
+# Don't warn if the minimum TLS is not set to TLS1_2 explicitly. For now, it's default for new storage accounts
+# Module: modules/storage_account/main.tf:2-30
+AVD-AZU-0011
+
+# Don't warn to allow the set of trusted Microsoft services to bypass the network rules. It is set as defaults in variables. Module: modules/storage_account/main.tf:45-54
+AVD-AZU-0010
