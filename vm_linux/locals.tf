@@ -1,0 +1,7 @@
+locals {
+  resource_group_name = coalesce(var.resource_group_name, try(var.resource_group.name, null))
+
+  location = coalesce(var.location, try(var.resource_group.location, null))
+
+  provision_vm_agent = (var.patch_assessment_mode == "AutomaticByPlatform" || var.patch_mode == "AutomaticByPlatform") ? true : false
+}

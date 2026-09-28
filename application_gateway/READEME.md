@@ -1,0 +1,62 @@
+## Application Gateway module
+
+> Based on the [claranet/app-gateway](https://registry.terraform.io/modules/claranet/app-gateway/azurerm/latest) module [github](https://github.com/claranet/terraform-azurerm-app-gateway/tree/master)
+
+
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >=4.0.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >=4.0.0 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [azurerm_cosmosdb_account.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_account) | resource |
+| [azurerm_cosmosdb_sql_container.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_sql_container) | resource |
+| [azurerm_cosmosdb_sql_database.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_sql_database) | resource |
+| [azurerm_role_assignment.CosmosDB_Encryption_User](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_AzureCosmosDB_oid"></a> [AzureCosmosDB\_oid](#input\_AzureCosmosDB\_oid) | The 'Azure Cosmos DB' first-party-identity object ID.<br/>NOTE:<br/>  You can search the 'Azure Cosmos DB' first-party-identity by the name or application ID:<br/>  00001111-aaaa-2222-bbbb-3333cccc4444 for any Azure region except Azure Government regions<br/>  where the application ID is 11112222-bbbb-3333-cccc-4444dddd5555.<br/>  If the 'Azure Cosmos DB' principal isn't in the list, you might need to re-register<br/>  the 'Microsoft.DocumentDB' resource provider. | `string` | `""` | no |
+| <a name="input_automatic_failover_enabled"></a> [automatic\_failover\_enabled](#input\_automatic\_failover\_enabled) | (Optional) Enable automatic failover for this Cosmos DB account. | `bool` | `false` | no |
+| <a name="input_backup"></a> [backup](#input\_backup) | type = (Required) The type of the backup. Possible values are 'Continuous' and 'Periodic'.<br/>       NOTE:<br/>            Migration of 'Periodic' to 'Continuous' is one-way,<br/>            changing 'Continuous' to 'Periodic' forces a new resource to be created.<br/>tier = (Optional) The continuous backup tier. Possible values are 'Continuous7Days' and 'Continuous30Days'. | <pre>object({<br/>    type = optional(string, "Continuous")<br/>    tier = string<br/>  })</pre> | <pre>{<br/>  "tier": "Continuous7Days",<br/>  "type": "Continuous"<br/>}</pre> | no |
+| <a name="input_consistency_policy"></a> [consistency\_policy](#input\_consistency\_policy) | consistency\_level       = (Required) The Consistency Level to use for this CosmosDB Account.<br/>                          Can be either 'BoundedStaleness', 'Eventual', 'Session', 'Strong' or 'ConsistentPrefix'.<br/>max\_interval\_in\_seconds = (Optional) When used with the Bounded Staleness consistency level,<br/>                          this value represents the time amount of staleness (in seconds) tolerated.<br/>                          The accepted range for this value is 5 - 86400 (1 day).<br/>                          Defaults to 5. Required when 'consistency\_level' is set to 'BoundedStaleness'.<br/>max\_staleness\_prefix    = (Optional) When used with the Bounded Staleness consistency level,<br/>                          this value represents the number of stale requests tolerated.<br/>                          The accepted range for this value is 10 – 2147483647.<br/>                          Defaults to 100. Required when 'consistency\_level' is set to 'BoundedStaleness'.<br/>                    NOTE:<br/>                        'max\_interval\_in\_seconds' and 'max\_staleness\_prefix' can only be set to values<br/>                        other than default when the 'consistency\_level' is set to 'BoundedStaleness'. | <pre>object({<br/>    consistency_level       = string<br/>    max_interval_in_seconds = number<br/>    max_staleness_prefix    = number<br/>  })</pre> | <pre>{<br/>  "consistency_level": "BoundedStaleness",<br/>  "max_interval_in_seconds": 300,<br/>  "max_staleness_prefix": 100000<br/>}</pre> | no |
+| <a name="input_create_sql_database"></a> [create\_sql\_database](#input\_create\_sql\_database) | Whether to create a SQL database. | `bool` | `false` | no |
+| <a name="input_default_identity_type"></a> [default\_identity\_type](#input\_default\_identity\_type) | (Optional) The default identity for accessing Key Vault.<br/>Possible values are 'FirstPartyIdentity', 'SystemAssignedIdentity' or 'UserAssignedIdentity'.<br/>Defaults to 'SystemAssignedIdentity' (Originally 'FirstPartyIdentity')<br/>NOTE:<br/>  When 'default\_identity\_type' is a 'UserAssignedIdentity' it must include<br/>  the User Assigned Identity ID in the following format:<br/>    UserAssignedIdentity=/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{userAssignedIdentityName} | `string` | `"SystemAssignedIdentity"` | no |
+| <a name="input_encryption_key"></a> [encryption\_key](#input\_encryption\_key) | id             = A Key Vault Key ID for CMK encryption.<br/>key\_vault\_id   = The ID of the Key Vault where the Key is created. Changing this forces a new resource to be created.<br/>versionless\_id = A versionless Key Vault Key ID for CMK encryption. Changing this forces a new resource to be created.<br/>  NOTE:<br/>    - When referencing an 'azurerm\_key\_vault\_key' resource, use 'versionless\_id' instead of 'id'<br/>    - In order to use a Custom Key from Key Vault for encryption you must grant Azure Cosmos DB Service<br/>      access to your key vault. For instructions on how to configure your Key Vault correctly<br/>      please refer to the product documentation (https://docs.microsoft.com/azure/cosmos-db/how-to-setup-cmk#add-an-access-policy-to-your-azure-key-vault-instance). | <pre>object({<br/>    id             = string<br/>    key_vault_id   = string<br/>    versionless_id = string<br/>  })</pre> | <pre>{<br/>  "id": null,<br/>  "key_vault_id": null,<br/>  "versionless_id": null<br/>}</pre> | no |
+| <a name="input_kind"></a> [kind](#input\_kind) | (Optional) Specifies the Kind of CosmosDB to create.<br/>Possible values are 'GlobalDocumentDB', 'MongoDB' and 'Parse'. Defaults to 'GlobalDocumentDB'.<br/>Changing this forces a new resource to be created. | `string` | `"GlobalDocumentDB"` | no |
+| <a name="input_location"></a> [location](#input\_location) | (Required) The location/region where to create the CosmosDB Account. Changing this forces a new resource to be created. | `string` | `null` | no |
+| <a name="input_name"></a> [name](#input\_name) | (Required) Specifies the name of the CosmosDB Account. Changing this forces a new resource to be created. | `string` | n/a | yes |
+| <a name="input_public_network_access_enabled"></a> [public\_network\_access\_enabled](#input\_public\_network\_access\_enabled) | (Optional) Whether or not public network access is allowed for this CosmosDB account. Defaults to 'false'. | `bool` | `false` | no |
+| <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | name     = (Required) The name of the resource group in which to create the CosmosDB Account. Changing this forces a new resource to be created.<br/>location = (Required) The location/region where CosmosDB Account host is created. Changing this forces a new resource to be created.<br/>tags     = (Optional) A mapping of tags to assign to the resource. | <pre>object({<br/>    name     = string<br/>    location = string<br/>    tags     = map(string)<br/>  })</pre> | `null` | no |
+| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | (Required) The name of the resource group in which to create the CosmosDB Account. Changing this forces a new resource to be created. | `string` | `null` | no |
+| <a name="input_sql_database_containers"></a> [sql\_database\_containers](#input\_sql\_database\_containers) | (Optional) The list of container names to create. | `list(string)` | `[]` | no |
+| <a name="input_sql_database_name"></a> [sql\_database\_name](#input\_sql\_database\_name) | Specifies the name of the Cosmos DB SQL Database. | `string` | `"database"` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | (Optional) A mapping of tags to assign to the resource. | `map(any)` | `null` | no |
+| <a name="input_user_assigned_identity_id"></a> [user\_assigned\_identity\_id](#input\_user\_assigned\_identity\_id) | (Optional) The User Assigned Managed Identity ID to be assigned to this Cosmos Account. | `string` | `null` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_id"></a> [id](#output\_id) | n/a |
+| <a name="output_name"></a> [name](#output\_name) | n/a |
+| <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name) | n/a |
+<!-- END_TF_DOCS -->
